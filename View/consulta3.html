@@ -49,7 +49,18 @@
             </div>
         </nav>
         <div class="jumbotron" style="padding:40px;">
-
+                <form action="/consulta1" method="POST">
+                    <select name="color" id="color">
+                        <option value="Red">Rojo</option>
+                        <option value="Green">Verde</option>  
+                        <option value="Cyan">Cryan</option>
+                        <option value="Magenta">Magenta</option>                
+                        <option value="Translucent">Translucido</option>
+                        <option value="Silver">Plata</option>                              
+                    </select>
+                    <br>
+                    <button type="submit">Realizar Consulta</button>
+                </form>
         </div>
     </div>
 </body>
