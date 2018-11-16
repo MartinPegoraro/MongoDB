@@ -1,0 +1,129 @@
+var express = require('express');
+var app = express();
+var bodyParser = require('body-parser');
+var mongodb = require('mongodb');
+var MongoClient = mongodb.MongoClient;
+
+// Connection URL
+const url = 'mongodb://192.168.1.20:27017';
+
+
+app.use(express.static(__dirname + '/View'));
+app.use(bodyParser.urlencoded({ extend: true }));
+app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'html');
+
+
+
+//Render index.html
+app.get('/', function (req, res) {
+    res.sendFile(__dirname + '/View/index.html');
+    res.render()
+});
+
+app.post('/', function (req, res) {
+    res.sendFile(__dirname + '/View/index.html');
+    res.render()
+});
+
+
+// Connect to the MongoDB
+MongoClient.connect(url, function (err, client) {
+    if (err) {
+        console.log('No fue posible conectarde al servido', err);
+    } else {
+        // Conectado
+        console.log('Coneccion establecida con', url);
+
+        const db = client.db('Integrador'); //DB en USO
+        var partes = db.collection('Partes'); //Coleccion Partes
+        var proveedores = db.collection('Proveedores'); //Coleccion Proveedores
+        var catalogo = db.collection('Catalogo'); //Coleccion Catalogo
+
+        //Cargar datos a BD
+        //partes.insertMany(partesJson);
+        //proveedores.insertMany(proveedoresJson);
+        //catalogo.insertMany(catalogoJson);
+
+        
+
+        
+    }
+});
+
+//Parts DB Json
+partesJson = [{
+    _id:1,nombrepa:'Left Handed Bacan',color:'Red'
+},{
+    _id:2,nombrepa:'Smoke Shifter',color:'Black'
+},
+{
+    _id:3,nombrepa:'Acme Widget Washer',color:'Red'
+},
+{
+    _id:4,nombrepa:'Acme Widget Washer',color:'Silver'
+},
+{
+    _id:5,nombrepa:'I Brake for Crop Circles Stricker',color:'Translucent'
+},
+{
+    _id:6,nombrepa:'Anti Gravity Turbine Generator',color:'Cyan'
+},
+{
+    _id:7,nombrepa:'Anti Gravity Turbine Generator',color:'Magenta'
+},
+{
+    _id:8,nombrepa:'Fire Hydrant Cap',color:'Red'
+},
+{
+    _id:9,nombrepa:'7 Segment Display',color:'Green'
+}];
+
+//Catalog DB Json
+catalogoJson = [{
+    _id:1,idp:1,idpa:3,precio:0.50
+},
+{
+    _id:2,idp:1,idpa:4,precio:0.50
+},
+{
+    _id:3,idp:1,idpa:8,precio:11.70
+},
+{
+    _id:5,idp:2,idpa:3,precio:0.55
+},
+{
+    _id:6,idp:2,idpa:8,precio:7.95
+},
+{
+    _id:7,idp:2,idpa:1,precio:16.50
+},
+{
+    _id:8,idp:3,idpa:8,precio:12.50
+},
+{
+    _id:9,idp:3,idpa:9,precio:1
+},
+{
+    _id:10,idp:4,idpa:5,precio:2.20
+},
+{
+    _id:11,idp:4,idpa:6,precio:1247548.23
+},
+{
+    _id:12,idp:4,idpa:7,precio:1247548.23
+}];
+
+//Suppliers DB Json
+proveedoresJson = [{
+    _id:1,nombrep:'Acme Widget Suppliers',direccionp:'1 Grub St., Potemkin Village, IL 61801'
+},
+{
+    _id:2,nombrep:'Big Red Tool and Die',direccionp:'4 My Way, Bermuda Shorts, OR 90305'
+},
+{
+    _id:3,nombrep:'Perfunctory Parts',direccionp:'99999 Short Pier, Terra Del Fuego, TX 41299'
+},
+{
+    _id:4,nombrep:'Alien Aircaft Inc.',direccionp:'2 Groom Lake, Rachel, NV 51902'
+}]
