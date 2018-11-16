@@ -16,8 +16,62 @@ app.set('view engine', 'html');
 
 
 //Render index.html
-app.get('/', function (req, res) {
+app.get('/consulta1', function (req, res) {
     res.sendFile(__dirname + '/View/index.html');
+    res.render()
+});
+
+//Render consulta2.html
+app.get('/consulta2', function (req, res) {
+    res.sendFile(__dirname + '/View/consulta2.html');
+    res.render()
+});
+
+//Render consulta3.html
+app.get('/consulta3', function (req, res) {
+    res.sendFile(__dirname + '/View/consulta3.html');
+    res.render()
+});
+
+//Render consulta4.html
+app.get('/consulta4', function (req, res) {
+    res.sendFile(__dirname + '/View/consulta4.html');
+    res.render()
+});
+
+//Render consulta5.html
+app.get('/consulta5', function (req, res) {
+    res.sendFile(__dirname + '/View/consulta5.html');
+    res.render()
+});
+
+//Render consulta6.html
+app.get('/consulta6', function (req, res) {
+    res.sendFile(__dirname + '/View/consulta6.html');
+    res.render()
+});
+
+//Render consulta7.html
+app.get('/consulta7', function (req, res) {
+    res.sendFile(__dirname + '/View/consulta7.html');
+    res.render()
+});
+
+//Render consulta8.html
+app.get('/consulta8', function (req, res) {
+    res.sendFile(__dirname + '/View/consulta8.html');
+    res.render()
+});
+
+//Render consulta9.html
+app.get('/consulta9', function (req, res) {
+    res.sendFile(__dirname + '/View/consulta9.html');
+    res.render()
+});
+
+//Render consulta10.html
+app.get('/consulta3', function (req, res) {
+    res.sendFile(__dirname + '/View/consulta10.html');
     res.render()
 });
 
