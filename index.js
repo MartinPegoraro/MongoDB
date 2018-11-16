@@ -181,3 +181,8 @@ proveedoresJson = [{
 {
     _id:4,nombrep:'Alien Aircaft Inc.',direccionp:'2 Groom Lake, Rachel, NV 51902'
 }]
+
+
+app.listen(3010);
+
+console.log("Corriendo en localhost:3010");
