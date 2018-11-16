@@ -17,7 +17,7 @@ app.set('view engine', 'html');
 
 //Render index.html
 app.get('/consulta1', function (req, res) {
-    res.sendFile(__dirname + '/View/index.html');
+    res.sendFile(__dirname + '/View/consulta1.html');
 });
 
 //Render consulta2.html
@@ -61,7 +61,7 @@ app.get('/consulta9', function (req, res) {
 });
 
 //Render consulta10.html
-app.get('/consulta3', function (req, res) {
+app.get('/consulta10', function (req, res) {
     res.sendFile(__dirname + '/View/consulta10.html');
 });
 
