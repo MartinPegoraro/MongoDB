@@ -22,41 +22,28 @@ app.get('/consulta1', function (req, res) {
 
 //POST consulta1
 app.post('/consulta1', function (req, res) {
-    let colorbody = req.body.color;
-    var aux = {
-        parteID: [],
-        proveedoresCompleto: [],
-        catalogoCompleto: []
+   
+    aux = {
+        partesRojas:[],
+        catalogoPaRojas:[],
+        proveedores:[]
     }
-    function cargar() {
-        MongoClient.connect(url, function (err, client) {
-           
-                // Conectado
-                console.log('Coneccion establecida con', url);
-                const db = client.db('Integrador'); //DB en USO
-                //Coleccion Partes
-                var partes = db.collection('Partes');
-                //Coleccion Proveedores                           
-                var proveedores = db.collection('Proveedores');
-                //Coleccion Catalogo                                                                                
-                var catalogo = db.collection('Catalogo');
 
-                partes.find({ color: colorbody }).toArray().then(e => {
-                    aux.parteID = e;
-                })
-
-                proveedores.find({}).toArray().then(e => {
-                    aux.proveedoresCompleto = e;
-                })
-
-                catalogo.find({}).toArray().then(e => {
-                    aux.catalogoCompleto = e;
-                })
-            
+    partes.find({color:'Red'}).forEach( function(myDoc) { 
+        //console.log( "user: " + myDoc._id ); 
+        aux.partesRojas.push(myDoc._id)
+    }).then(function(){
+        catalogo.find({idpa:{$in:aux.partesRojas}}).forEach(function(e){
+            //console.log(e)
+            aux.catalogoPaRojas.push(e.idp)
+        }).then(function(){
+            proveedores.find({_id:{$in:aux.catalogoPaRojas}}).forEach(function(proveedor){
+                aux.proveedores.push(proveedor.nombrep)
+            }).then(function(){
+                console.log('Proveedores que proveen Partes Rojas: ' + aux.proveedores)
+            })
         })
-    }
-    cargar()
-    console.log('asd')
+    })
 })
 
 //Render consulta2.html
@@ -66,80 +53,30 @@ app.get('/consulta2', function (req, res) {
 
 //POST consulta2
 app.post('/consulta2', function (req, res) {
-    let bodycolor1 = req.body.color1;
-    let bodycolor2 = req.body.color2;
-    MongoClient.connect(url, function (err, client) {
-        if (err) {
-            console.log('No fue posible conectarde al servido', err);
-        } else {
-            // Conectado
-            console.log('Coneccion establecida con', url);
-            const db = client.db('Integrador'); //DB en USO
-            //Coleccion Partes
-            var partes = db.collection('Partes');
-            //Coleccion Proveedores                           
-            var proveedores = db.collection('Proveedores');
-            //Coleccion Catalogo                                                                                
-            var catalogo = db.collection('Catalogo');
 
-            var aux = {
-                c1: [],
-                c2: []
-            }
+    aux = {
+        partesRojas:[],
+        catalogoPaRojas:[],
+        proveedores:[]
+    }
 
-            aux.c1 = findIdpaConColor(db, bodycolor1, function () {
-                client.close();
-            });
-            aux.c2 = findIdpaConColor(db, bodycolor2, function () {
-                client.close();
-            });
-
-            aux1 = {
-                i1: [],
-                i2: []
-            }
-            var z = 0
-            for (z = 1; z < 3; z++) {
-                aux1.i1 = findIdpConIdpa(db, aux.c1[z], function () {
-                    client.close();
-                })
-            }
-
-            function findIdpaConColor(db, valor, callback) {
-                // Get the documents collection
-                const collection = db.collection('Partes');
-                // Find some documents
-                collection
-                    .find({ color: valor })
-                    .project({ _id: 1 })
-                    .toArray(function (err, docs) {
-                        console.log("Found the following records");
-                        console.log(docs)
-                        callback(docs);
-                        aux.a = docs;
-                    });
-                return (aux.a)
-            }
-
-            function findIdpConIdpa(db, valor, callback) {
-                // Get the documents collection
-                const collection = db.collection('Catalogo');
-                // Find some documents
-                collection
-                    .find({ idp: valor })
-                    .project({ _id: 1 })
-                    .toArray(function (err, docs) {
-                        console.log("Found the following records");
-                        console.log(docs)
-                        callback(docs);
-                        aux.a = docs;
-                    });
-                return (aux.a)
-            }
-
-
-        }
+    partes.find({color:{$in:['Red','Green']}}).forEach( function(myDoc) { 
+        //console.log( "user: " + myDoc._id ); 
+        aux.partesRojas.push(myDoc._id)
+    }).then(function(){
+        catalogo.find({idpa:{$in:aux.partesRojas}}).forEach(function(e){
+            //console.log(e)
+            aux.catalogoPaRojas.push(e.idp)
+        }).then(function(){
+            proveedores.find({_id:{$in:aux.catalogoPaRojas}}).forEach(function(proveedor){
+                aux.proveedores.push(proveedor._id)
+            }).then(function(){
+                console.log('Id de proveedores que proveen Partes Rojas o Partes Verdes: ' + aux.proveedores)
+            })
+        })
     })
+
+
 })
 
 //Render consulta3.html
@@ -148,6 +85,30 @@ app.get('/consulta3', function (req, res) {
 
 });
 
+//POST consulta3
+app.post('/consulta3', function (req, res) {
+    aux = {
+        partesRojas:[],
+        catalogoPaRojas:[],
+        proveedores:[]
+    }
+
+    partes.find({color:'Red'}).forEach( function(myDoc) { 
+        //console.log( "user: " + myDoc._id ); 
+        aux.partesRojas.push(myDoc._id)
+    }).then(function(){
+        catalogo.find({idpa:{$in:aux.partesRojas}}).forEach(function(e){
+            //console.log(e)
+            aux.catalogoPaRojas.push(e.idp)
+        }).then(function(){
+            proveedores.find({_id:{$in:aux.catalogoPaRojas},direccionp:'99999 Short Pier, Terra Del Fuego, TX 41299'}).forEach(function(proveedor){
+                aux.proveedores.push(proveedor._id)
+            }).then(function(){
+                console.log('Id de proveedores que proveen Partes Rojas o Partes Verdes: ' + aux.proveedores)
+            })
+        })
+    })
+})
 //Render consulta4.html
 app.get('/consulta4', function (req, res) {
     res.sendFile(__dirname + '/View/consulta4.html');
