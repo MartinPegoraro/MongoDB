@@ -56,7 +56,7 @@ app.post('/consulta1', function (req, res) {
                     proveedores.find({_id:{$in:aux.catalogoPaRojas}}).forEach(function(proveedor){
                         aux.proveedores.push(proveedor.nombrep)
                     }).then(function(){
-                        res.json('Nombre de proveedores que proveen Partes Rojas: ' + aux.proveedores )
+                        res.json('Nombre de proveedores que proveen Partes '+colorbody+' : ' + aux.proveedores )
                     })
              })
          })
@@ -70,8 +70,8 @@ app.get('/consulta2', function (req, res) {
 
 //POST consulta2
 app.post('/consulta2', function (req, res) {
-    let bodycolor1 = req.body.color1;
-    let bodycolor2 = req.body.color2;
+    let colorbody1 = req.body.color1;
+    let colorbody2 = req.body.color2;
     MongoClient.connect(url, function (err, client) {
         if (err) {
             console.log('No fue posible conectarde al servido', err);
@@ -92,7 +92,7 @@ app.post('/consulta2', function (req, res) {
                 proveedores:[]
             }
     
-            partes.find({color:{$in:[bodycolor1,bodycolor2]}}).forEach( function(myDoc) { 
+            partes.find({color:{$in:[colorbody1,colorbody2]}}).forEach( function(myDoc) { 
                 //console.log( "user: " + myDoc._id ); 
                 aux.partesRojas.push(myDoc._id)
             }).then(function(){
@@ -103,7 +103,7 @@ app.post('/consulta2', function (req, res) {
                     proveedores.find({_id:{$in:aux.catalogoPaRojas}}).forEach(function(proveedor){
                         aux.proveedores.push(proveedor._id)
                     }).then(function(){
-                        res.json('Id de proveedores que proveen Partes Rojas o Partes Verdes: ' + aux.proveedores)
+                        res.json('Id de proveedores que proveen Partes ' +colorbody1+' o Partes '+colorbody2+ ' : ' + aux.proveedores)
                     })
                 })
             })
@@ -154,7 +154,7 @@ app.post('/consulta3', function (req, res) {
                         aux.proveedores.push(proveedor._id)
     
                     }).then(function(){
-                        res.json('Id de Proveedores que provean alguna parte roja o vivan en 99999 Short Pier, Terra Del Fuego, TX 41299: ' + aux.proveedores)
+                        res.json('Id de Proveedores que provean alguna parte ' +colorbody1+ ' o vivan en 99999 Short Pier, Terra Del Fuego, TX 41299: ' + aux.proveedores)
                     })
                 })
             })
@@ -169,40 +169,56 @@ app.get('/consulta4', function (req, res) {
 app.post('/consulta4', function (req, res) {
     let colorbody1 = req.body.color1;
     let colorbody2 = req.body.color2;
-    aux = {
-        partesRojas:[],
-        partesVerdes:[],
-        catalogoPaRojas:[],
-        catalogoPaVerde:[],
-        proveedores:[],
-        proveedoresV:[]
-    }
-
-    partes.find({color: colorbody1}).forEach(function(myDoc) { 
-        //console.log( "user: " + myDoc._id ); 
-        aux.partesRojas.push(myDoc._id)
-    }).then(function(){
-        catalogo.find({idpa:{$in:aux.partesRojas}}).forEach(function(e){
-            //console.log(e)
-            aux.catalogoPaRojas.push(e.idp)
-        }).then(function(){
-            partes.find({color:colorbody2}).forEach(function(myDocu){
-                aux.partesVerdes.push(myDocu._id)
+   
+    MongoClient.connect(url, function (err, client) {
+        if (err) {
+            console.log('No fue posible conectarde al servido', err);
+        } else {
+            // Conectado
+            console.log('Coneccion establecida con', url);
+            const db = client.db('Integrador'); //DB en USO
+            //Coleccion Partes
+            var partes = db.collection('Partes');
+            //Coleccion Proveedores                           
+            var proveedores = db.collection('Proveedores');
+            //Coleccion Catalogo                                                                                
+            var catalogo = db.collection('Catalogo');
+   
+            aux = {
+                partesRojas:[],
+                partesVerdes:[],
+                catalogoPaRojas:[],
+                catalogoPaVerde:[],
+                proveedores:[],
+                proveedoresV:[]
+            }
+        
+            partes.find({color:colorbody1}).forEach(function(myDoc) { 
+                //console.log( "user: " + myDoc._id ); 
+                aux.partesRojas.push(myDoc._id)
             }).then(function(){
-                catalogo.find({idpa:{$in:aux.partesVerdes}}).forEach(function(e1){
-                    aux.catalogoPaVerde.push(e1.idp)
+                catalogo.find({idpa:{$in:aux.partesRojas}}).forEach(function(e){
+                    //console.log(e)
+                    aux.catalogoPaRojas.push(e.idp)
                 }).then(function(){
-                    proveedores.find({$and:[{_id:{$in:aux.catalogoPaRojas}},{_id:{$in:aux.catalogoPaVerde}}]}).forEach(function(proveedor){
-                        aux.proveedores.push(proveedor._id)
+                    partes.find({color:colorbody2}).forEach(function(myDocu){
+                        aux.partesVerdes.push(myDocu._id)
                     }).then(function(){
-                        console.log('id de proveedores que venden partes rojas y partes Verdes: ' + aux.proveedores)
+                        catalogo.find({idpa:{$in:aux.partesVerdes}}).forEach(function(e1){
+                            aux.catalogoPaVerde.push(e1.idp)
+                        }).then(function(){
+                            proveedores.find({$and:[{_id:{$in:aux.catalogoPaRojas}},{_id:{$in:aux.catalogoPaVerde}}]}).forEach(function(proveedor){
+                                aux.proveedores.push(proveedor._id)
+                            }).then(function(){
+                                res.json('id de proveedores que venden partes '+colorbody1+' y partes '+colorbody2+' : ' + aux.proveedores)
+                            })
+                        })
                     })
                 })
             })
-        })
-    })
-    
-})
+           
+    }}) 
+ })
 
 //Render consulta5.html
 app.get('/consulta5', function (req, res) {
@@ -211,6 +227,23 @@ app.get('/consulta5', function (req, res) {
 
 //POST consulta5
 app.post('/consulta5', function (req, res) {
+    
+    MongoClient.connect(url, function (err, client) {
+
+        if (err) {
+            console.log('No fue posible conectarde al servido', err);
+        } else {
+            // Conectado
+            console.log('Coneccion establecida con', url);
+            const db = client.db('Integrador'); //DB en USO
+            //Coleccion Partes
+            var partes = db.collection('Partes');
+            //Coleccion Proveedores                           
+            var proveedores = db.collection('Proveedores');
+            //Coleccion Catalogo                                                                                
+            var catalogo = db.collection('Catalogo');
+
+    //encuentre los sid de los proveedores que proveen cada parte
     catalogo.aggregate([
         {
             $group:{
@@ -224,8 +257,10 @@ app.post('/consulta5', function (req, res) {
         ])
         .forEach(function(doc){
             aux.prov=doc
-            console.log(aux.prov)
+            res.json('aksdkadkad' +aux.prov)
         })
+        res.json('Fin')
+    }})
 })
 
 //Render consulta6.html
@@ -277,21 +312,43 @@ app.get('/consulta10', function (req, res) {
 //POST consulta10
 app.post('/consulta10', function (req, res) {
    
-    catalogo.aggregate([
-        {
-            $group:{
-                _id:"$idpa",
-                count:{ $sum:1}
+    MongoClient.connect(url, function (err, client) {
+
+        if (err) {
+            console.log('No fue posible conectarde al servido', err);
+        } else {
+            // Conectado
+            console.log('Coneccion establecida con', url);
+            const db = client.db('Integrador'); //DB en USO
+            //Coleccion Partes
+            var partes = db.collection('Partes');
+            //Coleccion Proveedores                           
+            var proveedores = db.collection('Proveedores');
+            //Coleccion Catalogo                                                                                
+            var catalogo = db.collection('Catalogo');
+
+            //encuentre los pids de partes que sea provistas por al menos 2 proveedores
+            var aux={
+                prov:[]
             }
-        },
-            {
-                $match:{count:{$gt:1} }      //Existen 9 partes
-            }
-        ])
-        .forEach(function(doc){
-            aux.prov=doc
-            console.log(aux.prov)
-        })
+             catalogo.aggregate([
+                 {
+                     $group:{
+                         _id:"$idpa",
+                         count:{ $sum:1}
+                     }
+                 },
+                     {
+                         $match:{count:{$gt:1} }      //Existen 9 partes
+                     }
+                 ])
+                 .forEach(function(doc){
+                     aux.prov.push(doc)
+                    
+                     res.json(aux.prov)
+                 })
+
+            }})
 })
 
 app.post('/', function (req, res) {
@@ -315,8 +372,9 @@ MongoClient.connect(url, function (err, client) {
         //Cargar datos a BD
         //partes.insertMany(partesJson);
         //proveedores.insertMany(proveedoresJson);
-        //catalogo.insertMany(catalogoJson);
+        catalogo.insertMany(catalogoJson);
 
+        
 
 
 
@@ -386,8 +444,23 @@ catalogoJson = [{
     _id: 11, idp: 4, idpa: 7, precio: 1247548.23
 },
 {
-    _id: 12, idp: 2, idpa: 9, precio: 10.50
-}
+    _id: 12, idp: 1, idpa: 9, precio: 10.50
+},
+{
+    _id: 13, idp: 1, idpa: 5, precio: 10.50
+},
+{
+    _id: 14, idp: 1, idpa: 7, precio: 12.50
+},
+{
+    _id: 15, idp: 1, idpa: 2, precio: 12.50
+},
+{
+    _id: 16, idp: 1, idpa: 6, precio: 12.50
+},
+{
+    _id: 17, idp: 1, idpa: 1, precio: 12.50
+},
 ];
 
 //Suppliers DB Json
