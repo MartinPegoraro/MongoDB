@@ -530,6 +530,7 @@ MongoClient.connect(url, function (err, client) {
         //partes.insertMany(partesJson);
         //proveedores.insertMany(proveedoresJson);
         //catalogo.insertMany(catalogoJson);
+        
 
 
 
