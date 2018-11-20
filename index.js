@@ -7,7 +7,7 @@ var express_graphql = require('express-graphql'); //GraphQL
 var { buildSchema } = require('graphql'); //GraphQL
 
 // Connection URL
-const url = 'mongodb://192.168.1.20:27017';
+const url = 'mongodb://192.168.0.118:27017';
 
 app.use(bodyParser.json())
 app.use(express.static(__dirname + '/View'));
@@ -247,7 +247,7 @@ app.post('/consulta2', function (req, res) {
                     proveedores.find({ _id: { $in: aux.catalogoPaRojas2 } }).forEach(function (proveedor) {
                         aux.proveedores2.push(proveedor._id)
                     }).then(function () {
-                        res.json('Id de proveedores que proveen Partes ' + colorbody1 + ' o Partes ' + colorbody2 + ' : ' + aux.proveedores)
+                        res.json('Id de proveedores que proveen Partes ' + colorbody1 + ' o Partes ' + colorbody2 + ' : ' + aux.proveedores2)
                     })
                 })
             })
@@ -298,7 +298,7 @@ app.post('/consulta3', function (req, res) {
                         aux.proveedores3.push(proveedor._id)
 
                     }).then(function () {
-                        res.json('Id de Proveedores que provean alguna parte ' + colorbody1 + ' o vivan en 99999 Short Pier, Terra Del Fuego, TX 41299: ' + aux.proveedores)
+                        res.json('Id de Proveedores que provean alguna parte ' + colorbody1 + ' o vivan en 99999 Short Pier, Terra Del Fuego, TX 41299: ' + aux.proveedores3)
                     })
                 })
             })
@@ -417,61 +417,14 @@ app.post('/consulta5', function (req, res) {
     })
 })
 
+
 //Render consulta6.html
 app.get('/consulta6', function (req, res) {
     res.sendFile(__dirname + '/View/consulta6.html');
 });
 
-//POST consulta6
+//POST consulta6-----------------------Resuelto-----------------------
 app.post('/consulta6', function (req, res) {
-    if (err) {
-        console.log('No fue posible conectarde al servido', err);
-    } else {
-        // Conectado
-        console.log('Coneccion establecida con', url);
-        const db = client.db('Integrador'); //DB en USO
-        //Coleccion Partes
-        var partes = db.collection('Partes');
-        //Coleccion Proveedores                           
-        var proveedores = db.collection('Proveedores');
-        //Coleccion Catalogo                                                                                
-        var catalogo = db.collection('Catalogo');
-
-
-
-
-    }
-})
-
-
-
-//Render consulta7.html
-app.get('/consulta7', function (req, res) {
-    res.sendFile(__dirname + '/View/consulta7.html');
-});
-
-
-//POST consulta7
-app.post('/consulta7', function (req, res) {
-
-})
-//Render consulta8.html
-app.get('/consulta8', function (req, res) {
-    res.sendFile(__dirname + '/View/consulta8.html');
-});
-
-//POST consulta8
-app.post('/consulta8', function (req, res) {
-
-})
-
-//Render consulta9.html
-app.get('/consulta9', function (req, res) {
-    res.sendFile(__dirname + '/View/consulta9.html');
-});
-
-//POST consulta9-----------------------Resuelto-----------------------
-app.post('/consulta9', function (req, res) {
 
     MongoClient.connect(url, function (err, client) {
 
@@ -507,13 +460,13 @@ app.post('/consulta9', function (req, res) {
     })
 });
 
-//Render consulta10.html
-app.get('/consulta10', function (req, res) {
-    res.sendFile(__dirname + '/View/consulta10.html');
+//Render consulta7.html
+app.get('/consulta7', function (req, res) {
+    res.sendFile(__dirname + '/View/consulta7.html');
 });
 
 //POST consulta10-----------------------Resuelto-------------------------
-app.post('/consulta10', function (req, res) {
+app.post('/consulta7', function (req, res) {
 
     MongoClient.connect(url, function (err, client) {
 
